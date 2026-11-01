@@ -10,7 +10,7 @@ if {$dev eq "nano20k"} {
     set_device GW2AR-LV18QN88C8/I7 -device_version C
     add_file -type verilog "src/boards/nano20k.v"
     add_file -type verilog "src/pllr/gowin_pll_hdmi.v"
-    add_file -type cst "src/nano20k/monitor.cst"
+    add_file -type cst "src/boards/nano20k.cst"
 } elseif {$dev eq "primer25k"} {
     set_device GW5A-LV25MG121NC1/I0 -device_version A
     add_file -type verilog "src/boards/primer25k.v"
