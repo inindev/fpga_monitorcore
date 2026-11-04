@@ -1,3 +1,5 @@
+// Modified for tangcore (2026-11-04), from fpga_game_consoles: Nano 20K onboard RGB LED
+// (ws2812) turned off at boot, audio amp (pa_en) held off, led 2 bits wide. See git history.
 // "Monitor" core that is loaded as the default core on power-up.
 // nand2mario, 2025.2
 
@@ -61,8 +63,17 @@ module monitor_top (
     output       ds_cs2,
 `endif
 
+`ifdef NANO20K
+    // Nano 20K onboard parts
+    output       pa_en,         // audio amp enable: held off
+    output       ws2812,        // RGB LED: sent "off" once at boot
+
+    // LED: the Nano 20K pin file has 2 (unplaced ones would land on TF card pins)
+    output [1:0] led
+`else
     // LED
     output [7:0] led
+`endif
 );
 
 // Clock signals
@@ -98,6 +109,41 @@ pll_74 pll_74 (
     .clkin(clk27),              // 27 Mhz input
     .clkout0(hclk), .clkout1(hclk5)
 );
+`endif
+
+`ifdef NANO20K
+// Keep the onboard audio amp off (MAX98357A SD_MODE, low = shutdown)
+assign pa_en = 1'b0;
+
+// Turn the onboard WS2812 RGB LED off: it can latch a color from noise while the FPGA
+// configures. At 27 MHz (sys_clk): hold low 8192 cycles (303 us, a reset), send 24 zero bits
+// (34 cycles = 1.26 us each, high for 8 = 296 ns), then stay low. WS2812B-2020 datasheet:
+// T0H 220-380 ns, bit period at least 1.25 us, reset at least 280 us.
+reg [12:0] ws_rst = 13'd0;      // reset, low
+reg [5:0]  ws_ph = 6'd0;        // cycle within a bit, 0-33
+reg [4:0]  ws_bit = 5'd0;       // bit, 0-23
+reg ws_done = 1'b0;
+reg ws_out = 1'b0;
+always @(posedge sys_clk) begin
+    ws_out <= 1'b0;
+    if (!ws_done) begin
+        if (ws_rst != 13'h1fff)
+            ws_rst <= ws_rst + 13'd1;
+        else begin
+            ws_out <= ws_ph < 6'd8;
+            if (ws_ph != 6'd33)
+                ws_ph <= ws_ph + 6'd1;
+            else begin
+                ws_ph <= 6'd0;
+                if (ws_bit == 5'd23)
+                    ws_done <= 1'b1;
+                else
+                    ws_bit <= ws_bit + 5'd1;
+            end
+        end
+    end
+end
+assign ws2812 = ws_out;
 `endif
 
 reg [15:0] resetcnt = 16'hffff;

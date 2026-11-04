@@ -1,3 +1,5 @@
+// Modified for tangcore (2026-11-04), from fpga_game_consoles: pa_en (pin 51) and ws2812
+// (pin 79) added. See git history.
 IO_LOC "sys_clk" 4;
 IO_PORT "sys_clk" IO_TYPE=LVCMOS33 PULL_MODE=NONE BANK_VCCIO=3.3;
 // IO_LOC "s1" 88;
@@ -61,3 +63,11 @@ IO_PORT "led[1]" IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
 IO_LOC "led[0]" 15;
 IO_PORT "led[0]" IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
 
+// Onboard audio amp enable (MAX98357A SD_MODE), held low: amp off
+IO_LOC "pa_en" 51;
+IO_PORT "pa_en" IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8 BANK_VCCIO=3.3;
+
+// Onboard WS2812 RGB LED data in. The core sends it "off" once at boot (it can latch a
+// color from noise while the FPGA configures), then holds the line low.
+IO_LOC "ws2812" 79;
+IO_PORT "ws2812" IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8 BANK_VCCIO=3.3;
