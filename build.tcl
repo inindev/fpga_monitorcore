@@ -11,6 +11,7 @@ if {$dev eq "nano20k"} {
     add_file -type verilog "src/boards/nano20k.v"
     add_file -type verilog "src/pllr/gowin_pll_hdmi.v"
     add_file -type cst "src/boards/nano20k.cst"
+    add_file -type sdc "src/monitor.sdc"
 } elseif {$dev eq "primer25k"} {
     set_device GW5A-LV25MG121NC1/I0 -device_version A
     add_file -type verilog "src/boards/primer25k.v"
@@ -19,6 +20,7 @@ if {$dev eq "nano20k"} {
     add_file -type verilog "src/plla/pll_12.v"
     add_file -type verilog "src/usb_hid_host.v"
     add_file -type cst "src/boards/primer25k.cst"
+    add_file -type sdc "src/monitor.sdc"
     set_option -use_ready_as_gpio 1
     set_option -use_done_as_gpio 1
 } elseif {$dev eq "mega60k"} {
@@ -27,18 +29,21 @@ if {$dev eq "nano20k"} {
     add_file -type verilog "src/plla/pll_27.v"
     add_file -type verilog "src/plla/pll_74.v"
     add_file -type cst "src/boards/mega60k.cst"
+    add_file -type sdc "src/monitor.sdc"
 } elseif {$dev eq "mega138k"} {
     set_device GW5AST-LV138PG484AC1/I0 -device_version B
     add_file -type verilog "src/boards/mega138k.v"
     add_file -type verilog "src/pll/pll_27.v"
     add_file -type verilog "src/pll/pll_74.v"
     add_file -type cst "src/boards/mega138k_31002.cst"
+    add_file -type sdc "src/monitor.sdc"
 } elseif {$dev eq "mega138k_31002"} {
     set_device GW5AST-LV138PG484AC1/I0 -device_version B
     add_file -type verilog "src/boards/mega138k.v"
     add_file -type verilog "src/pll/pll_27.v"
     add_file -type verilog "src/pll/pll_74.v"
     add_file -type cst "src/boards/mega138k_31002.cst"
+    add_file -type sdc "src/monitor.sdc"
 } elseif {$dev eq "console60k"} {
     set_device GW5AT-LV60PG484AC1/I0 -device_version B
     add_file -type verilog "src/boards/console60k.v"
@@ -47,6 +52,7 @@ if {$dev eq "nano20k"} {
     add_file -type verilog "src/plla/pll_12.v"
     add_file -type verilog "src/usb_hid_host.v"
     add_file -type cst "src/boards/console.cst"
+    add_file -type sdc "src/monitor.sdc"
 } elseif {$dev eq "console138k"} {
     set_device GW5AST-LV138PG484AC1/I0 -device_version B
     add_file -type verilog "src/boards/console138k.v"
@@ -55,6 +61,7 @@ if {$dev eq "nano20k"} {
     add_file -type verilog "src/pll/pll_12.v"
     add_file -type verilog "src/usb_hid_host.v"
     add_file -type cst "src/boards/console.cst"
+    add_file -type sdc "src/monitor.sdc"
 } else {
     error "Unknown device $dev"
 }

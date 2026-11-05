@@ -181,30 +181,34 @@ controller_ds2 #(.FREQ(FREQ)) joy2_ds2 (
 );
 `endif
 
-wire [11:0] joy_usb1, joy_usb2;
+wire [11:0] joy_usb1, joy_usb2;      // USB gamepad buttons, in clk's domain
 
 `ifdef USB1
 wire clk12;
 wire pll_lock_12;
 wire usb_conerr;
 wire [1:0] usb_type;
+wire [11:0] joy_usb1_12;
 pll_12 pll12(.clkin(sys_clk), .clkout0(clk12), .lock(pll_lock_12));
 usb_hid_host usb_hid_host (
     .usbclk(clk12), .usbrst_n(pll_lock_12),
     .usb_dm(usb1_dn), .usb_dp(usb1_dp),
-    .game_snes(joy_usb1), .typ(usb_type), .conerr(usb_conerr)
+    .game_snes(joy_usb1_12), .typ(usb_type), .conerr(usb_conerr)
 );
+usb_hid_sync usb1_sync (.clk(clk), .d(joy_usb1_12), .q(joy_usb1));
 assign led = ~{joy_usb1[4:0], usb_type, usb_conerr};
 `else
 assign joy_usb1 = 12'b0;
 `endif
 
 `ifdef USB2
+wire [11:0] joy_usb2_12;
 usb_hid_host usb_hid_host2 (
     .usbclk(clk12), .usbrst_n(pll_lock_12),
     .usb_dm(usb2_dn), .usb_dp(usb2_dp),
-    .game_snes(joy_usb2)
+    .game_snes(joy_usb2_12)
 );
+usb_hid_sync usb2_sync (.clk(clk), .d(joy_usb2_12), .q(joy_usb2));
 `else
 assign joy_usb2 = 12'b0;
 `endif

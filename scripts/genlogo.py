@@ -50,31 +50,11 @@ def get_logo_data(image):
         logo_data.append(row)
     return logo_data
 
-def print_hex(logo_data):
-    r = []
+def save_rows(logo_data, filename):
+    assert len(logo_data) == 14 and all(len(row) == 72 for row in logo_data)
+    with open(filename, 'w') as f:
+        f.write("\n".join(logo_data) + "\n")
 
-    for i in range(126):
-        j = i % 9
-        s = logo_data[i // 9][j*8 : j*8+8]
-        b = 0
-        for k in range(8):
-            if s[k] == '1':
-                b += 1 << k
-        # print("{} -> {:02X}".format(s, b))
-        r.append(b)
-
-    assert(len(r) == 126)
-
-    r.append(0)
-    r.append(0)
-
-    for i in range(4):
-        off = i * 32
-        print("defparam dpb_inst_0.INIT_RAM_{:02X} = 256'h".format(0x1C+i), end='')
-        for j in range(31, -1, -1):     # 31, 30, ...
-            print("{:02X}".format(r[off+j]), end='')
-        print()
-            
 
 def save_preview(image, filename):
     #######################################################
@@ -122,9 +102,10 @@ logo_data = get_logo_data(image)
 for row in logo_data:
     print(row)
 
-# Print hex values for `iosys/gowin_dpb_menu.v`
-print("\nCut and paste the following into `iosys/gowin_dpb_menu.v`:\n")
-print_hex(logo_data)
+# The rows go into a core's `iosys/gowin_dpb_menu.v` through tangcore's font script
+save_rows(logo_data, 'logo.txt')
+print("\nLogo saved as `logo.txt`. To use it for a core, from the tangcore folder:\n")
+print("    scripts/font_glyphs.py --logo <core> logo.txt      (e.g. fpga_smstang)")
 
 print("\nA preview of the logo is saved as `logo.png`.")
 save_preview(image, 'logo.png')
