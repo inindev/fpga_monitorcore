@@ -136,6 +136,7 @@ module monitor2hdmi (
           .rgb(rgb), 
           .reset( ~resetn ),
           .audio_sample_word(),
+          .volume(4'd0),           // no audio
           .tmds(tmds), 
           .tmds_clock(tmdsClk), 
           .cx(cx), 
